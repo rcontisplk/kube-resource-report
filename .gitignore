@@ -1,6 +1,7 @@
 .*.swp
 __pycache__/
 output/
+output*/
 .pytest_cache/
 .coverage
 .idea/
