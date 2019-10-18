@@ -733,6 +733,9 @@ def write_report(out: OutputManager, start, notifications, cluster_summaries, na
     total_allocatable = collections.defaultdict(int)
     total_requests = collections.defaultdict(int)
     total_user_requests = collections.defaultdict(int)
+# doing time stuff here -rconti
+    starttime = datetime.datetime.utcnow()
+    formatstarttime = starttime.strftime("%Y-%m-%d-%H-%M-%S")
 
     for cluster_id, summary in sorted(cluster_summaries.items()):
         for r in "cpu", "memory":
@@ -742,9 +745,11 @@ def write_report(out: OutputManager, start, notifications, cluster_summaries, na
 
     resource_categories = ["capacity", "allocatable", "requests", "usage"]
 
-    with out.open("clusters.tsv") as csvfile:
+    with out.open("clusters-" + formatstarttime + ".tsv") as csvfile:
         writer = csv.writer(csvfile, delimiter="\t")
-        headers = ["Cluster ID", "API Server URL", "Master Nodes", "Worker Nodes", "Worker Instance Type", "Kubelet Version"]
+## let's add date here to allow Splunk to time-series events, and ignores dupes -rconti
+## single instance of date to make the data 'clean' and not slow down the loop iteration -rconti
+        headers = ["Date", "Cluster ID", "API Server URL", "Master Nodes", "Worker Nodes", "Worker Instance Type", "Kubelet Version"]
         for x in resource_categories:
             headers.extend([f"CPU {x.capitalize()}", f"Memory {x.capitalize()} [MiB]"])
         headers.append("Cost [USD]")
@@ -758,6 +763,8 @@ def write_report(out: OutputManager, start, notifications, cluster_summaries, na
                     worker_instance_type.add(node["instance_type"])
                 kubelet_version.add(node["kubelet_version"])
             fields = [
+# added start to add date column -rconti
+                formatstarttime,
                 cluster_id,
                 summary["cluster"].api_server_url,
                 summary["master_nodes"],
@@ -797,11 +804,14 @@ def write_report(out: OutputManager, start, notifications, cluster_summaries, na
                 round(team["cost"], 2),
                 round(team["slack_cost"], 2)])
 
-    with out.open("applications.tsv") as csvfile:
+    with out.open("applications-" + formatstarttime + ".tsv") as csvfile:
         writer = csv.writer(csvfile, delimiter="\t")
-        writer.writerow(["ID", "Team", "Clusters", "Pods", "CPU Requests", "Memory Requests", "CPU Usage", "Memory Usage", "Cost [USD]", "Slack Cost [USD]"])
+# adding -rconti
+        writer.writerow(["Date", "ID", "Team", "Clusters", "Pods", "CPU Requests", "Memory Requests", "CPU Usage", "Memory Usage", "Cost [USD]", "Slack Cost [USD]"])
         for app_id, app in sorted(applications.items()):
             writer.writerow([
+# adding -rconti
+                formatstarttime,
                 app_id, app["team"], len(app["clusters"]), app["pods"],
                 round(app["requests"]["cpu"], 2),
                 round(app["requests"]["memory"], 2),
@@ -810,11 +820,14 @@ def write_report(out: OutputManager, start, notifications, cluster_summaries, na
                 round(app["cost"], 2),
                 round(app["slack_cost"], 2)])
 
-    with out.open("namespaces.tsv") as csvfile:
+    with out.open("namespaces-" + formatstarttime + ".tsv") as csvfile:
         writer = csv.writer(csvfile, delimiter="\t")
-        writer.writerow(["Name", "Status", "Cluster", "Pods", "CPU Requests", "Memory Requests", "CPU Usage", "Memory Usage", "Cost [USD]", "Slack Cost [USD]"])
+# adding start date -rconti
+        writer.writerow(["Date", "Name", "Status", "Cluster", "Pods", "CPU Requests", "Memory Requests", "CPU Usage", "Memory Usage", "Cost [USD]", "Slack Cost [USD]"])
         for cluster_id, namespace_item in sorted(namespace_usage.items()):
             fields = [
+# adding start time -rconti
+                formatstarttime,
                 namespace_item["id"],
                 namespace_item["status"],
                 namespace_item["cluster"].id,
@@ -1054,5 +1067,5 @@ def write_report(out: OutputManager, start, notifications, cluster_summaries, na
         context["ingresses_by_application"] = ingresses_by_application
         context["pods_by_application"] = pods_by_application
         out.render_template('application.html', context, file_name)
-
-    out.clean_up_stale_files()
+# let's not clean up stale files, I'd rather keep these around, for that is the point -rconti
+#    out.clean_up_stale_files()
