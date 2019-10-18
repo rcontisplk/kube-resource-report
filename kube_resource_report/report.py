@@ -745,7 +745,7 @@ def write_report(out: OutputManager, start, notifications, cluster_summaries, na
 
     resource_categories = ["capacity", "allocatable", "requests", "usage"]
 
-    with out.open("clusters-" + formatstarttime + ".tsv") as csvfile:
+    with out.open("clusters-" + formatstarttime + ".tsv.log") as csvfile:
         writer = csv.writer(csvfile, delimiter="\t")
 ## let's add date here to allow Splunk to time-series events, and ignores dupes -rconti
 ## single instance of date to make the data 'clean' and not slow down the loop iteration -rconti
@@ -804,7 +804,7 @@ def write_report(out: OutputManager, start, notifications, cluster_summaries, na
                 round(team["cost"], 2),
                 round(team["slack_cost"], 2)])
 
-    with out.open("applications-" + formatstarttime + ".tsv") as csvfile:
+    with out.open("applications-" + formatstarttime + ".tsv.log") as csvfile:
         writer = csv.writer(csvfile, delimiter="\t")
 # adding -rconti
         writer.writerow(["Date", "ID", "Team", "Clusters", "Pods", "CPU Requests", "Memory Requests", "CPU Usage", "Memory Usage", "Cost [USD]", "Slack Cost [USD]"])
@@ -820,7 +820,7 @@ def write_report(out: OutputManager, start, notifications, cluster_summaries, na
                 round(app["cost"], 2),
                 round(app["slack_cost"], 2)])
 
-    with out.open("namespaces-" + formatstarttime + ".tsv") as csvfile:
+    with out.open("namespaces-" + formatstarttime + ".tsv.log") as csvfile:
         writer = csv.writer(csvfile, delimiter="\t")
 # adding start date -rconti
         writer.writerow(["Date", "Name", "Status", "Cluster", "Pods", "CPU Requests", "Memory Requests", "CPU Usage", "Memory Usage", "Cost [USD]", "Slack Cost [USD]"])
