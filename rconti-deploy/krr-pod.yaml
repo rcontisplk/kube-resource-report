@@ -6,9 +6,9 @@ spec:
   containers:
     - image: cloudrepo-docker-playground.jfrog.io/user-rconti/krr:1.0.1
       name: krr
+      volumeMounts:
+      - mountPath: /output
+        name: logs-krr
   volumes:
     - name: "logs-krr"
       emptyDir: {}
-#      volumeMounts:
-#        - mountPath: "/output"
-#          name: "krr-data"
