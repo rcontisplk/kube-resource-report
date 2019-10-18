@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: krr
+spec:
+  containers:
+    - image: cloudrepo-docker-playground.jfrog.io/user-rconti/krr:1.0.0
+      name: krr
+      volumes:
+        - name: "logs-krr"
+          emptyDir: {}
+#      volumeMounts:
+#        - mountPath: "/output"
+#          name: "krr-data"
