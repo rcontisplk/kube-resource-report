@@ -4,7 +4,7 @@ metadata:
   name: krr
 spec:
   containers:
-    - image: cloudrepo-docker-playground.jfrog.io/user-rconti/krr:1.0.0
+    - image: cloudrepo-docker-playground.jfrog.io/user-rconti/krr:1.0.1
       name: krr
       volumes:
         - name: "logs-krr"
