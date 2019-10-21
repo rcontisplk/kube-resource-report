@@ -1,0 +1,109 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: query-krr
+  namespace: user-rconti
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  - services
+  # - configmaps
+  # - replicasets
+  # - deployments
+  verbs:
+  - get
+  - watch
+  - list
+  # - describe
+#  - create
+#  - delete
+#  - patch
+#  - update
+#  - deletecollection
+---
+# apiVersion: rbac.authorization.k8s.io/v1
+# kind: ClusterRole
+# metadata:
+#   name: cluster-query-krr
+# rules:
+# - apiGroups:
+#   - ""
+#   resources:
+#   - pods
+#   - services
+#   - configmaps
+#   - replicasets
+#   - namespaces
+#   - deployments
+#   verbs:
+#   - get
+#   - watch
+#   - list
+#   - describe
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: sa-krr
+---
+# apiVersion: v1
+# kind: serviceAccount
+# metadata:
+#   name: sa-krr-cluster
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: sa-krr
+  namespace: user-rconti
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: query-krr
+subjects:
+- kind: ServiceAccount
+  name: sa-krr
+  namespace: user-rconti
+---
+# apiVersion: rbac.authorization.k8s.io/v1
+# kind: RoleBinding
+# metadata:
+#   name: sa-krr-cluster
+#   namespace: user-rconti
+# roleRef:
+#   apiGroup: rbac.authorization.k8s.io
+#   kind: Role
+#   name: cluster-query-krr
+# subjects:
+# - kind: ServiceAccount
+#   name: sa-krr-cluster
+#   namespace: user-rconti
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: krr
+  name: krr
+  namespace: user-rconti
+spec:
+  selector:
+    matchLabels:
+      app: krr
+  template:
+    metadata:
+      labels:
+        app: krr
+    spec:
+      containers:
+        - image: cloudrepo-docker-playground.jfrog.io/user-rconti/krr:1.0.4
+          name: krr
+          volumeMounts:
+          - mountPath: /output
+            name: logs-krr
+      volumes:
+        - name: "logs-krr"
+          emptyDir: {}
+      serviceAccountName: sa-krr
