@@ -10,18 +10,23 @@ rules:
   - pods
   - services
   - configmaps
-  # - replicasets
-  # - deployments
   verbs:
   - get
   - watch
   - list
-#  - describe
-#  - create
-#  - delete
-#  - patch
-#  - update
-#  - deletecollection
+- apiGroups:
+  - "extensions"
+  resources:
+  - deployments
+  - deployments/scale
+  - ingresses
+  - replicasets
+  - replicasets/scale
+  - replicationcontrollers/scale
+  verbs:
+  - get
+  - watch
+  - list
 ---
 apiVersion: v1
 kind: ServiceAccount
@@ -49,6 +54,10 @@ metadata:
     app: krr
   name: krr
   namespace: user-rconti
+  annotations:
+    log.splunk8s.io/sourcetype.applications: tsv-krr-applications
+    log.splunk8s.io/sourcetype.clusters: tsv-krr-clusters
+    log.splunk8s.io/sourcetype.namespaces: tsv-krr-namespaces
 spec:
   selector:
     matchLabels:
