@@ -9,49 +9,24 @@ rules:
   resources:
   - pods
   - services
-  # - configmaps
+  - configmaps
   # - replicasets
   # - deployments
   verbs:
   - get
   - watch
   - list
-  # - describe
+#  - describe
 #  - create
 #  - delete
 #  - patch
 #  - update
 #  - deletecollection
 ---
-# apiVersion: rbac.authorization.k8s.io/v1
-# kind: ClusterRole
-# metadata:
-#   name: cluster-query-krr
-# rules:
-# - apiGroups:
-#   - ""
-#   resources:
-#   - pods
-#   - services
-#   - configmaps
-#   - replicasets
-#   - namespaces
-#   - deployments
-#   verbs:
-#   - get
-#   - watch
-#   - list
-#   - describe
----
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: sa-krr
----
-# apiVersion: v1
-# kind: serviceAccount
-# metadata:
-#   name: sa-krr-cluster
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
@@ -66,20 +41,6 @@ subjects:
 - kind: ServiceAccount
   name: sa-krr
   namespace: user-rconti
----
-# apiVersion: rbac.authorization.k8s.io/v1
-# kind: RoleBinding
-# metadata:
-#   name: sa-krr-cluster
-#   namespace: user-rconti
-# roleRef:
-#   apiGroup: rbac.authorization.k8s.io
-#   kind: Role
-#   name: cluster-query-krr
-# subjects:
-# - kind: ServiceAccount
-#   name: sa-krr-cluster
-#   namespace: user-rconti
 ---
 apiVersion: extensions/v1beta1
 kind: Deployment
@@ -98,7 +59,7 @@ spec:
         app: krr
     spec:
       containers:
-        - image: cloudrepo-docker-playground.jfrog.io/user-rconti/krr:1.0.4
+        - image: cloudrepo-docker-playground.jfrog.io/user-rconti/krr:1.0.5
           name: krr
           volumeMounts:
           - mountPath: /output
