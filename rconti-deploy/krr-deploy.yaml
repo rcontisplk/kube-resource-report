@@ -70,7 +70,7 @@ spec:
         app: krr
     spec:
       containers:
-        - image: cloudrepo-docker-playground.jfrog.io/user-rconti/krr:1.0.7
+        - image: cloudrepo-docker-playground.jfrog.io/user-rconti/krr:1.0.9
           name: krr
           volumeMounts:
           - mountPath: /output
