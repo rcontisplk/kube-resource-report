@@ -1,1 +1,1 @@
-0 * * * * kr python3 -m kube_resource_report /output > /dev/null 2> /output/cronerror.log
+10 * * * * python3 -m kube_resource_report /output && for i in `ls /output/| grep -v "tsv.log"` ; do rm -rf /output/$i ; done  > /dev/null 2> /output/cronerror.log

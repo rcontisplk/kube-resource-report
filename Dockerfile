@@ -14,26 +14,17 @@ RUN apk update && apk add curl
 RUN curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.15.1/bin/linux/amd64/kubectl
 RUN chmod u+x kubectl && mv kubectl /bin/kubectl
 
-RUN apk update && apk add cron
-
 FROM python:3.7-alpine3.10
 
 WORKDIR /
 
 COPY --from=0 /usr/local/lib/python3.7/site-packages /usr/local/lib/python3.7/site-packages
 
-COPY kube_resource_report /kube_resource_report
-COPY resources/crontab /etc/cron.d/krr-cron
-RUN chmod 0644 /etc/cron.d/krr-cron
+COPY kube_resource_report /root/kube_resource_report
+COPY resources/crontab /etc/cron.d/root
 
 ARG VERSION=dev
-RUN sed -i "s/__version__ = .*/__version__ = '${VERSION}'/" /kube_resource_report/__init__.py
-
-RUN addgroup -g 314 krr && adduser -s /bin/sh -D -G krr -g krr -u 314 krr
-RUN mkdir /output
-RUN chown -R krr:krr /kube_resource_report /output
-## leaving this commented out; I think cron itself has to run as root.
-#USER krr:krr
+RUN sed -i "s/__version__ = .*/__version__ = '${VERSION}'/" /root/kube_resource_report/__init__.py
 
 #ENTRYPOINT ["python3", "-m", "kube_resource_report", "/output"]
 
@@ -41,4 +32,4 @@ RUN chown -R krr:krr /kube_resource_report /output
 #CMD tail -f /dev/null
 
 # run cron in the foreground so container doesn't exit; see if this works
-CMD ["cron", "-f"]
+ENTRYPOINT ["/usr/sbin/crond", "-f", "-d", "0", "-c", "/etc/cron.d"]
