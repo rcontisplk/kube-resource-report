@@ -10,9 +10,11 @@ RUN /pipenv-install.py && \
     rm -fr /usr/local/lib/python3.7/site-packages/setuptools
 
 # install kubectl ; should only be needed for testing as I think the script hits the apiserver directly.
-RUN apk update && apk add curl git
+RUN apk update && apk add curl
 RUN curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.15.1/bin/linux/amd64/kubectl
 RUN chmod u+x kubectl && mv kubectl /bin/kubectl
+
+RUN apk update && apk add cron
 
 FROM python:3.7-alpine3.10
 
