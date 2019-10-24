@@ -54,21 +54,23 @@ metadata:
     app: krr
   name: krr
   namespace: user-rconti
-  annotations:
-    log.splunk8s.io/sourcetype.applications: tsv-krr-applications
-    log.splunk8s.io/sourcetype.clusters: tsv-krr-clusters
-    log.splunk8s.io/sourcetype.namespaces: tsv-krr-namespaces
 spec:
   selector:
     matchLabels:
       app: krr
   template:
     metadata:
+      annotations:
+        log.splunk8s.io/sourcetype: tsv-krr
+        log.splunk8s.io/sourcetype.applications: tsv-krr-applications
+        # new type to see if splunk gets "polluted" as soon as a non-compliant file matches a sourcetype
+        log.splunk8s.io/sourcetype.applications-2: tsv-krr-applications-2
+        log.splunk8s.io/sourcetype.applications-3.tsv: tsv-krr-applications-3
       labels:
         app: krr
     spec:
       containers:
-        - image: cloudrepo-docker-playground.jfrog.io/user-rconti/krr:1.0.5
+        - image: cloudrepo-docker-playground.jfrog.io/user-rconti/krr:1.0.6
           name: krr
           volumeMounts:
           - mountPath: /output
