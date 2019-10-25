@@ -10,6 +10,7 @@
         <earliest>-24h@h</earliest>
         <latest>now</latest>
       </search>
+      <default>admin</default>
     </input>
     <input type="time" token="field1" searchWhenChanged="true">
       <label>Historical Time</label>
@@ -25,7 +26,7 @@
       <chart>
         <title>Dollars per Month - Rate</title>
         <search>
-          <query>index=main host="krr" sourcetype="tsv-krr-applications" ID=$appID$| timechart values("Cost _USD") as cost | predict cost</query>
+          <query>index=main host="krr" sourcetype="tsv-krr-applications" ID=$appID$| timechart avg("Cost _USD") as cost | predict cost</query>
           <earliest>1569888000</earliest>
           <latest>1572566400</latest>
           <sampleRatio>1</sampleRatio>
@@ -71,7 +72,7 @@
       <chart>
         <title>Dollars per Month - Rate</title>
         <search>
-          <query>index=main host="krr" sourcetype="tsv-krr-applications" ID=$appID$ | timechart values("Slack Cost _USD") as slack</query>
+          <query>index=main host="krr" sourcetype="tsv-krr-applications" ID=$appID$ | timechart avg("Slack Cost _USD") as slack</query>
           <earliest>@mon</earliest>
           <latest>now</latest>
         </search>

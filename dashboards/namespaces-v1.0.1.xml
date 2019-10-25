@@ -1,16 +1,16 @@
 <form theme="dark">
-  <label>Clusters - Cost View</label>
+  <label>Namespaces - Cost View</label>
   <fieldset submitButton="false" autoRun="true">
-    <input type="dropdown" token="clusterID" searchWhenChanged="true">
-      <label>Cluster</label>
-      <fieldForLabel>Cluster ID</fieldForLabel>
-      <fieldForValue>Cluster ID</fieldForValue>
+    <input type="dropdown" token="namespaceID" searchWhenChanged="true">
+      <label>Namespace</label>
+      <fieldForLabel>Name</fieldForLabel>
+      <fieldForValue>Name</fieldForValue>
       <search>
-        <query>index=main host=krr sourcetype="tsv-krr-clusters" | table "Cluster ID" | dedup "Cluster ID" | sort "Cluster ID"</query>
+        <query>index=main host=krr sourcetype="tsv-krr-namespaces" | table "Name" | dedup "Name" | sort "Name"</query>
         <earliest>-24h@h</earliest>
         <latest>now</latest>
       </search>
-      <default>app-play1.dev.us-west-2.splunk8s.io</default>
+      <default>app-tools</default>
     </input>
     <input type="time" token="field1" searchWhenChanged="true">
       <label>Historical Time</label>
@@ -26,7 +26,7 @@
       <chart>
         <title>Dollars per Month - Rate</title>
         <search>
-          <query>index=main host="krr" sourcetype="tsv-krr-clusters" "Cluster ID"=$clusterID$| timechart avg("Cost _USD") as cost | predict cost</query>
+          <query>index=main host="krr" sourcetype="tsv-krr-namespaces" "Name"=$namespaceID$| timechart avg("Cost _USD") as cost | predict cost</query>
           <earliest>1569888000</earliest>
           <latest>1572566400</latest>
           <sampleRatio>1</sampleRatio>
@@ -72,7 +72,7 @@
       <chart>
         <title>Dollars per Month - Rate</title>
         <search>
-          <query>index=main host="krr" sourcetype="tsv-krr-clusters" "Cluster ID"=$clusterID$ | timechart avg("Slack Cost _USD") as slack</query>
+          <query>index=main host="krr" sourcetype="tsv-krr-namespaces" "Name"=$namespaceID$ | timechart avg("Slack Cost _USD") as slack</query>
           <earliest>@mon</earliest>
           <latest>now</latest>
         </search>
@@ -89,7 +89,7 @@
       <chart>
         <title>Dollars per Month - Rate</title>
         <search>
-          <query>index=main host="krr" sourcetype="tsv-krr-clusters" "Cluster ID"=$clusterID$ | timechart avg("Cost _USD") as cost</query>
+          <query>index=main host="krr" sourcetype="tsv-krr-namespaces" "Name"=$namespaceID$ | timechart avg("Cost _USD") as cost</query>
           <earliest>$field1.earliest$</earliest>
           <latest>$field1.latest$</latest>
         </search>
